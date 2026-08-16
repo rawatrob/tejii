@@ -32,3 +32,17 @@ jobs:
           git add raw data
           git diff --cached --quiet || git commit -m "daily $(date -u +%F)"
           git push
+
+      # The Pages project is direct-upload, not Git-connected, so pushing to
+      # GitHub alone does NOT refresh the site - this step is what makes it live.
+      - name: bundle site
+        run: |
+          mkdir -p dist
+          cp -r *.html *.css app.js articles.json content.json img data dist/
+
+      - name: deploy to cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=tejii --branch=main --commit-dirty=true

@@ -11,6 +11,10 @@
 # Cloudflare Pages build output — rebuilt on every deploy
 dist/
 
+# wrangler's local state/cache
+.wrangler/
+node_modules/
+
 # Machine noise
 __pycache__/
 *.pyc
