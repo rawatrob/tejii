@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="hi">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>सीखें — शेयर बाजार आसान भाषा में | Tejii</title>
+<meta name="description" content="शून्य से शुरू करने वालों के लिए 12 छोटे लेख — निवेश से पहले क्या करें, बाजार कैसे चलता है, और पहला कदम कैसे उठाएं।">
+<link rel="icon" href="img/logo.png">
+<link rel="stylesheet" href="style.css">
+<style>
+  .lvl{margin:22px 0 12px}
+  .lvl h2{font-size:19px;font-weight:800;color:var(--navy);display:flex;align-items:center;gap:9px}
+  .lvl h2 span{width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;
+    display:grid;place-items:center;font-size:14px;flex-shrink:0}
+  .lvl p{color:var(--mut);font-size:14px;margin:3px 0 0 37px}
+
+  .alist{display:grid;gap:12px}
+  @media(min-width:640px){ .alist{grid-template-columns:repeat(2,1fr)} }
+  @media(min-width:1100px){ .alist{grid-template-columns:repeat(3,1fr)} }
+  .acard{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:15px;
+    box-shadow:var(--shadow);display:flex;gap:12px;align-items:flex-start;min-height:96px}
+  .acard:hover{border-color:var(--green);transform:translateY(-1px)}
+  .acard .em{width:44px;height:44px;border-radius:12px;background:var(--green-l);display:grid;
+    place-items:center;font-size:21px;flex-shrink:0}
+  .acard b{font-size:15px;font-weight:800;display:block;line-height:1.4}
+  .acard p{font-size:13px;color:var(--mut);margin-top:3px}
+  .acard .meta{font-size:12px;color:var(--mut);margin-top:6px;display:flex;gap:9px;align-items:center}
+  .acard.done .em{background:#e8f2fb}
+  .acard.done b:after{content:" ✓";color:var(--green)}
+
+  /* reader */
+  .reader{max-width:760px;margin:0 auto}
+  .reader .back{display:inline-flex;align-items:center;gap:6px;font-weight:700;color:var(--green);
+    font-size:14px;padding:10px 0;min-height:40px}
+  .art{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:22px 20px;
+    box-shadow:var(--shadow)}
+  .art .em{font-size:38px;line-height:1}
+  .art h1{font-size:clamp(23px,4vw,31px);font-weight:800;color:var(--navy);margin:9px 0 5px;letter-spacing:-.4px}
+  .art .lead{color:var(--mut);font-size:15px;margin-bottom:5px}
+  .art .meta{font-size:12.5px;color:var(--mut);padding-bottom:15px;border-bottom:1px solid var(--line)}
+  .art h3{font-size:17.5px;font-weight:800;color:var(--navy);margin:22px 0 8px}
+  .art p{font-size:16px;line-height:1.85;margin-bottom:11px;color:#1e293b}
+  .art .end{margin-top:24px;padding-top:16px;border-top:1px solid var(--line);
+    display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+  .prog{position:fixed;top:0;left:0;height:3px;background:var(--green);z-index:70;width:0}
+</style>
+
+<body data-page="seekhein">
+<div class="prog" id="prog"></div>
+
+<main class="wrap" id="main">
+  <div id="hub">
+    <div class="phead">
+      <h1>सीखें</h1>
+      <p>शून्य से शुरू करने वालों के लिए। हर लेख 3–4 मिनट का है। ऊपर से नीचे, क्रम में पढ़िए —
+         हर हिस्सा पिछले पर टिका है।</p>
+    </div>
+    <div id="levels"></div>
+  </div>
+
+  <article class="reader" id="reader" hidden>
+    <a class="back" href="#">← सभी लेख</a>
+    <div class="art" id="art"></div>
+  </article>
+</main>
+
+<script src="app.js"></script>
+<script>
+let DB = null;
+
+fetch('articles.json?v=' + Date.now()).then(r => r.json()).then(d => { DB = d; route(); })
+  .catch(e => { $('#levels').innerHTML = '<p class="mut">लेख लोड नहीं हो सके।</p>'; console.error(e); });
+
+addEventListener('hashchange', route);
+addEventListener('scroll', () => {
+  const h = document.body.scrollHeight - innerHeight;
+  $('#prog').style.width = h > 0 ? (scrollY / h * 100) + '%' : '0';
+});
+
+function route() {
+  if (!DB) return;
+  const slug = location.hash.slice(1);
+  const a = DB.articles.find(x => x.slug === slug);
+  $('#hub').hidden = !!a;
+  $('#reader').hidden = !a;
+  a ? drawArticle(a) : drawHub();
+  scrollTo(0, 0);
+}
+
+function drawHub() {
+  const read = seen();
+  $('#levels').innerHTML = DB.levels.map(L => `
+    <div class="lvl"><h2><span>${L.n}</span>${esc(L.title)}</h2><p>${esc(L.sub)}</p></div>
+    <div class="alist">
+      ${DB.articles.filter(a => a.level === L.n).map(a => `
+        <a class="acard${read.includes(a.slug) ? ' done' : ''}" href="#${a.slug}">
+          <span class="em">${a.icon}</span>
+          <span><b>${esc(a.title)}</b><p>${esc(a.summary)}</p>
+          <span class="meta">⏱ ${a.mins} मिनट${read.includes(a.slug) ? ' · पढ़ लिया' : ''}</span></span>
+        </a>`).join('')}
+    </div>`).join('');
+  document.title = 'सीखें — शेयर बाजार आसान भाषा में | Tejii';
+}
+
+function drawArticle(a) {
+  const idx = DB.articles.indexOf(a), next = DB.articles[idx + 1];
+  $('#art').innerHTML = `
+    <div class="em">${a.icon}</div>
+    <h1>${esc(a.title)}</h1>
+    <p class="lead">${esc(a.summary)}</p>
+    <div class="meta">स्तर ${a.level} · ⏱ ${a.mins} मिनट पढ़ने में</div>
+    ${a.sections.map(s => `<h3>${esc(s.h)}</h3>${s.p.map(p => `<p>${esc(p)}</p>`).join('')}`).join('')}
+    <div class="end">
+      ${next ? `<a class="btn" href="#${next.slug}">अगला: ${esc(next.title)} →</a>` : ''}
+      <a class="btn ghost" href="#">सभी लेख</a>
+    </div>`;
+  document.title = a.title + ' | Tejii';
+  mark(a.slug);
+}
+
+/* which articles this device has opened — no login needed */
+function seen() { try { return JSON.parse(localStorage.tejii_read || '[]'); } catch { return []; } }
+function mark(slug) { try { localStorage.tejii_read = JSON.stringify([...new Set([...seen(), slug])]); } catch {} }
+
+homeData().then(stamp).catch(() => {});
+</script>
+</html>

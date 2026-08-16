@@ -1,0 +1,34 @@
+name: daily
+
+on:
+  schedule:
+    - cron: "30 13 * * 1-5"   # 19:00 IST, after NSE publishes bhavcopy (~18:15 IST)
+  workflow_dispatch:          # manual run button
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: self-checks
+        run: |
+          python3 scan.py --selfcheck
+          python3 build.py --selfcheck
+
+      - name: prices + indicators
+        run: python3 scan.py --back 400
+
+      - name: homepage data
+        run: python3 build.py
+
+      - name: commit
+        run: |
+          git config user.name  github-actions
+          git config user.email github-actions@github.com
+          git add raw data
+          git diff --cached --quiet || git commit -m "daily $(date -u +%F)"
+          git push

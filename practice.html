@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="hi">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Practice — बिना जोखिम के सीखिए | Tejii</title>
+<meta name="description" content="नुकसान कैलकुलेटर से देखिए कि आपका पैसा कितना घट सकता है, और जल्द आ रही ₹1,00,000 वर्चुअल पैसों वाली पेपर ट्रेडिंग।">
+<link rel="icon" href="img/logo.png">
+<link rel="stylesheet" href="style.css">
+<style>
+  .banner{display:block;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);
+    border:1px solid var(--line);margin-bottom:14px}
+  .banner img{width:100%;display:block}
+  .calc{display:grid;gap:12px}
+  @media(min-width:820px){ .calc{grid-template-columns:300px 1fr;align-items:start} }
+  .fld{margin-bottom:13px}
+  .fld label{display:block;font-size:13px;font-weight:700;color:var(--mut);margin-bottom:4px}
+  .fld input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;
+    font:inherit;font-size:16px;min-height:46px;background:#fff}
+  .fld .hint{font-size:12px;color:var(--mut);margin-top:3px}
+  .res{display:grid;gap:9px}
+  .rrow{display:flex;justify-content:space-between;align-items:center;gap:10px;
+    padding:13px 15px;border-radius:12px;background:var(--bg);font-size:14px}
+  .rrow b{font-size:19px;font-weight:800}
+  .rrow.bad{background:var(--red-l)} .rrow.bad b{color:var(--red)}
+  .rrow.ok{background:var(--green-l)} .rrow.ok b{color:var(--green-d)}
+  .verdict{margin-top:13px;padding:14px 15px;border-radius:12px;font-size:14.5px;line-height:1.65;
+    background:var(--amber-l)}
+  .verdict b{display:block;margin-bottom:4px;color:var(--amber)}
+  .soonlist{display:grid;gap:10px;margin-top:4px}
+  .soonlist li{display:flex;gap:10px;font-size:14px;line-height:1.55}
+  .soonlist .ic{width:24px;height:24px;border-radius:50%;background:var(--green-l);flex-shrink:0;
+    display:grid;place-items:center;font-size:12px;margin-top:1px}
+  .hist{display:grid;gap:7px;margin-top:4px}
+  .hrow{display:grid;grid-template-columns:88px 1fr 62px;gap:9px;align-items:center;font-size:13px}
+  .hbar{height:9px;background:#dce9f4;border-radius:99px;overflow:hidden}
+  .hbar span{display:block;height:100%;background:var(--red);border-radius:99px}
+</style>
+
+<body data-page="practice">
+<main class="wrap" id="main">
+  <div class="phead">
+    <h1>Practice</h1>
+    <p>असली पैसा लगाने से पहले यहाँ अभ्यास कीजिए। शुरुआत सबसे जरूरी सवाल से —
+       <b>“मेरा कितना नुकसान हो सकता है?”</b></p>
+  </div>
+
+  <a class="banner" href="#soon"><img src="img/banner1.jpg"
+    alt="₹1,00,000 वर्चुअल पैसों से बिना जोखिम प्रैक्टिस करें"></a>
+
+  <div class="grid g2">
+    <div class="card">
+      <h2>नुकसान कैलकुलेटर</h2>
+      <div class="calc">
+        <div>
+          <div class="fld">
+            <label for="amt">आप कितना पैसा लगाने की सोच रहे हैं?</label>
+            <input id="amt" type="number" value="50000" min="0" step="1000" inputmode="numeric">
+            <div class="hint">रुपये में</div>
+          </div>
+          <div class="fld">
+            <label for="mon">महीने का घर खर्च</label>
+            <input id="mon" type="number" value="30000" min="0" step="1000" inputmode="numeric">
+            <div class="hint">यह जांचने के लिए कि रकम आपके लिए बड़ी है या नहीं</div>
+          </div>
+        </div>
+        <div>
+          <div class="res" id="res"></div>
+          <div class="verdict" id="verdict"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>ऐसा पहले कब-कब हुआ है?</h2>
+      <p class="mut" style="font-size:13.5px;margin-bottom:11px">
+        भारतीय बाजार की कुछ बड़ी गिरावटें। हर बार बाजार लौटा — पर लौटने में समय लगा,
+        और उस दौरान बेच देने वालों का नुकसान पक्का हो गया।</p>
+      <div class="hist" id="hist"></div>
+      <p class="mut" style="font-size:12.5px;margin-top:11px">
+        ये मोटे ऐतिहासिक आंकड़े हैं, सिर्फ समझाने के लिए। बीता प्रदर्शन आगे की गारंटी नहीं होता।</p>
+    </div>
+  </div>
+
+  <div class="card" id="soon">
+    <h2>पूरी पेपर ट्रेडिंग <span class="tag a">जल्द आ रही है</span></h2>
+    <ul class="soonlist">
+      <li><span class="ic">💰</span><span><b>₹1,00,000 वर्चुअल पैसे</b> — असली शेयर, नकली पैसा।
+        एक रुपया भी अपना नहीं लगेगा।</span></li>
+      <li><span class="ic">📅</span><span>ऑर्डर <b>अगले दिन के बंद भाव</b> पर लगेगा। जान-बूझकर —
+        ताकि दिन भर स्क्रीन देखने की आदत न पड़े। नए लोगों का सबसे ज्यादा नुकसान इसी में होता है।</span></li>
+      <li><span class="ic">📊</span><span><b>Nifty से तुलना</b> — “आपने ₹4,200 कमाए। यही पैसा अगर
+        इंडेक्स फंड में होता तो ₹6,800 होते।” यही इस पूरी वेबसाइट की सबसे काम की लाइन होगी।</span></li>
+      <li><span class="ic">🚫</span><span>Options, F&amp;O, मार्जिन और शॉर्ट सेलिंग <b>कभी नहीं</b>
+        जोड़े जाएंगे। नए लोग वहीं सबसे ज्यादा गंवाते हैं।</span></li>
+    </ul>
+    <p class="mut" style="font-size:13px;margin-top:13px">
+      तब तक <a href="watchlist.html" style="color:var(--green-d);font-weight:700">Watchlist</a> में
+      कुछ कंपनियां जोड़कर रोज उनका हाल देखिए — यह अभ्यास की सबसे अच्छी शुरुआत है, और मुफ्त है।</p>
+  </div>
+</main>
+
+<script src="app.js"></script>
+<script>
+/* Historical Indian market drawdowns — rough, for illustration only. */
+const CRASHES = [
+  {when: '2008 (मंदी)',      fall: 60, back: '~5 साल'},
+  {when: '2020 (कोविड)',     fall: 38, back: '~8 महीने'},
+  {when: '2015–16',          fall: 22, back: '~1 साल'},
+  {when: '2011',             fall: 27, back: '~2 साल'},
+];
+
+$('#hist').innerHTML = CRASHES.map(c => `
+  <div class="hrow"><span>${c.when}</span>
+    <div class="hbar"><span style="width:${c.fall}%"></span></div>
+    <b class="dn">−${c.fall}%</b></div>
+  <div class="mut" style="font-size:12px;margin:-4px 0 5px 97px">वापस आने में ${c.back}</div>`).join('');
+
+const calc = () => {
+  const amt = Math.max(0, +$('#amt').value || 0);
+  const mon = Math.max(0, +$('#mon').value || 0);
+  const rows = [
+    ['सामान्य साल में (−10%)', amt * 0.9, 'bad'],
+    ['बुरे साल में (−20%)',    amt * 0.8, 'bad'],
+    ['2020 जैसी गिरावट (−38%)', amt * 0.62, 'bad'],
+    ['12% बढ़त पर, 10 साल बाद', amt * Math.pow(1.12, 10), 'ok'],
+  ];
+  $('#res').innerHTML = rows.map(([k, v, cls]) =>
+    `<div class="rrow ${cls}"><span>${k}</span><b>₹${inr(Math.round(v))}</b></div>`).join('');
+
+  const months = mon > 0 ? amt / mon : 0;
+  let msg;
+  if (amt === 0) msg = ['रकम भरिए', 'ऊपर कोई रकम लिखिए, नीचे नतीजा दिख जाएगा।'];
+  else if (months > 6) msg = ['यह रकम आपके लिए बड़ी है',
+    `₹${inr(amt)} आपके ${months.toFixed(1)} महीने के खर्च के बराबर है। अगर यह आधा भी घट जाए तो घबराहट होगी, और घबराहट में बेचना ही सबसे बड़ा नुकसान करता है। छोटी रकम से शुरू कीजिए।`];
+  else if (months > 3) msg = ['थोड़ा सोच लीजिए',
+    `यह आपके ${months.toFixed(1)} महीने के खर्च जितना है। पहले 6 महीने का खर्च अलग रखा है? अगर नहीं, तो पहले वो कीजिए।`];
+  else msg = ['यह रकम ठीक लगती है',
+    `यह आपके ${months.toFixed(1)} महीने के खर्च जितनी है। बशर्ते इमरजेंसी फंड अलग हो और यह पैसा 5 साल तक न चाहिए।`];
+  $('#verdict').innerHTML = `<b>⚖ ${msg[0]}</b>${esc(msg[1])}
+    <div style="margin-top:8px"><a href="seekhein.html#paise-lagane-se-pehle"
+      style="color:var(--amber);font-weight:800">निवेश से पहले के 4 काम पढ़ें →</a></div>`;
+};
+
+['amt', 'mon'].forEach(id => $('#' + id).oninput = calc);
+calc();
+
+homeData().then(stamp).catch(() => {});
+</script>
+</html>

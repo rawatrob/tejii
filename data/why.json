@@ -1,0 +1,14 @@
+{
+  "_howto": "Roz market band hone ke baad ye file update karein. 'date' wahi rakhein jo home.json ka date hai, warna kal ka analysis aaj nahi dikhega (jaan-boojh kar aisa banaya hai). 3-5 point, simple Hindi, koi buy/sell salah nahi. 'events' optional hai - kal ki khaas cheezein, jo 'Kal kis par nazar' box mein dikhengi.",
+  "date": "2026-08-14",
+  "events": [
+    {"at": "11:00", "what": "RBI गवर्नर का बयान", "kind": "event"},
+    {"at": "19:00", "what": "US महंगाई के आंकड़े", "kind": "data"}
+  ],
+  "points": [
+    "बाजार लगभग सपाट बंद हुआ — Nifty सिर्फ 0.12% गिरा। इतनी हलचल रोज होती है।",
+    "गिरावट किसी एक सेक्टर की नहीं थी — 10 में से 9 सेक्टर हल्के लाल रहे। सिर्फ मीडिया चढ़ा।",
+    "FII और DII दोनों ने खरीदारी की, फिर भी बाजार नहीं चढ़ा — मतलब बिकवाली छोटे शेयरों में रही (1,629 शेयर गिरे)।",
+    "India VIX 11.31 पर है, जो काफी नीचे है। बाजार में घबराहट नहीं है — यानी यह गिरावट सामान्य है, चिंता की बात नहीं।"
+  ]
+}

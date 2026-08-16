@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="hi">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tejii — 30 सेकंड में समझो आज बाजार में क्या हुआ</title>
+<meta name="description" content="रोज का बाजार हाल सरल हिंदी में। कौन सा सेक्टर चढ़ा, कौन सा गिरा, और क्यों — नए निवेशकों के लिए।">
+<link rel="icon" href="img/logo.png">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* ---------- ticker ---------- */
+  .tick{background:#fff;border-bottom:1px solid var(--line);overflow-x:auto}
+  .tick::-webkit-scrollbar{display:none}
+  .tickrow{display:flex;align-items:center;gap:20px;padding:9px 14px;white-space:nowrap;
+    max-width:1600px;margin:0 auto;font-size:13.5px}
+  .ti{display:flex;align-items:center;gap:6px}
+  .ti .nm{color:var(--mut);font-weight:700;font-size:12.5px}
+  .ti .vl{font-weight:800}
+  .pill{background:var(--green);color:#fff;padding:4px 12px;border-radius:99px;
+    font-size:11.5px;font-weight:800;letter-spacing:.4px}
+  .pill.shut{background:#7a8ca1}
+
+  /* ---------- hero ---------- */
+  .hero{display:grid;gap:14px;padding:14px 0}
+  @media(min-width:980px){ .hero{grid-template-columns:1fr 320px} }
+  @media(min-width:1400px){ .hero{grid-template-columns:1fr 360px} }
+  .heroart{position:relative;border-radius:var(--r);overflow:hidden;background:#eaf3fb;
+    box-shadow:var(--shadow);min-height:250px;display:flex;align-items:center}
+  .heroart img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:70% center}
+  .heroart .txt{position:relative;padding:26px 22px;width:100%;
+    background:linear-gradient(90deg,rgba(255,255,255,.97) 0%,rgba(255,255,255,.93) 38%,rgba(255,255,255,0) 74%)}
+  .heroart h1{font-size:clamp(22px,3.6vw,38px);line-height:1.28;color:var(--navy);
+    font-weight:800;max-width:58%;letter-spacing:-.5px}
+  .heroart h1 em{font-style:normal;color:var(--green)}
+  .heroart p{margin:9px 0 16px;font-size:clamp(13px,1.4vw,15.5px);color:#3d4c60;max-width:52%}
+  .cta{display:flex;gap:9px;flex-wrap:wrap}
+  @media(max-width:700px){
+    .heroart{min-height:0;display:block}
+    .heroart img{position:relative;height:auto;aspect-ratio:5/4;object-position:64% center}
+    .heroart .txt{position:absolute;inset:0;padding:17px 15px;
+      background:linear-gradient(180deg,rgba(255,255,255,.97) 0%,rgba(255,255,255,.93) 46%,
+        rgba(255,255,255,.28) 74%,rgba(255,255,255,0) 100%)}
+    .heroart h1,.heroart p{max-width:100%}
+    .heroart p{margin:7px 0 12px}
+  }
+
+  .mood{display:flex;align-items:center;gap:11px;padding-bottom:12px;border-bottom:1px solid var(--line);
+    margin-bottom:8px}
+  .mood .dot{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:21px}
+  .mood b{font-size:18px;font-weight:800}
+  .mrow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;font-size:13.5px}
+  .tag i{width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block}
+
+  /* stats */
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);
+    border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:14px;
+    box-shadow:var(--shadow)}
+  .stat{background:#fff;padding:13px;display:flex;gap:10px;align-items:flex-start}
+  /* stat icon sprite — 7 icons across img/stats.png */
+  .stat .ic{width:26px;height:26px;flex-shrink:0;background-image:url(img/stats.png);
+    background-size:192px 96px;background-repeat:no-repeat;background-position:-3.8px -34.7px}
+  .stat .ic.s1{background-position:-34.7px -34.7px}
+  .stat .ic.s2{background-position:-62.3px -34.7px}
+  .stat .ic.s3{background-position:-91px -34.7px}
+  .stat .ic.s4{background-position:-114.8px -34.7px}
+  .stat .ic.s5{background-position:-139.7px -34.7px}
+  .stat .k{font-size:12px;color:var(--mut);font-weight:700;margin-bottom:1px}
+  .stat .v{font-size:20px;font-weight:800;line-height:1.15;letter-spacing:-.5px}
+  .stat .s{font-size:12px;color:var(--mut)}
+  .stat .v small{font-size:12px;color:var(--mut);font-weight:600}
+  @media(min-width:640px){ .stats{grid-template-columns:repeat(3,1fr)} }
+  @media(min-width:1060px){ .stats{grid-template-columns:repeat(6,1fr)} }
+
+  .bul{display:grid;gap:10px}
+  .bul li{display:flex;gap:10px;font-size:14px;line-height:1.55}
+  .bul .ic{flex-shrink:0;width:22px;height:22px;border-radius:50%;font-size:11px;
+    display:grid;place-items:center;margin-top:2px;background:var(--green-l)}
+
+  .sec{display:grid;gap:8px}
+  .secrow{display:grid;grid-template-columns:22px 68px 1fr 54px;align-items:center;gap:8px;font-size:13px}
+  .secrow .sic{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
+    font-size:10px;font-weight:800;color:#fff}
+  .bar{height:9px;background:#dce9f4;border-radius:99px;overflow:hidden}
+  .bar span{display:block;height:100%;border-radius:99px}
+  .secrow b{text-align:right;font-weight:800}
+
+  .heat{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+  .heat div{border-radius:9px;padding:9px 4px;text-align:center;font-size:10.5px;font-weight:700;
+    overflow:hidden;text-overflow:ellipsis}
+  .heat div s{display:block;font-size:11.5px;font-weight:800;text-decoration:none;margin-top:1px}
+  @media(min-width:430px){ .heat{grid-template-columns:repeat(5,1fr)} }
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:11px;padding-top:9px;
+    border-top:1px solid var(--line);font-size:12px;color:var(--mut)}
+  .legend span{display:flex;align-items:center;gap:4px}
+  .legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+  .tabs{display:flex;gap:5px;margin-bottom:11px;overflow-x:auto}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 13px;
+    font:700 12.5px/1 inherit;cursor:pointer;white-space:nowrap;color:var(--mut);min-height:36px}
+  .tabs button.on{background:var(--green);color:#fff;border-color:var(--green)}
+  .mv{display:grid;gap:1px}
+  .mv a{display:grid;grid-template-columns:30px 1fr auto auto;gap:9px;align-items:center;
+    padding:9px 5px;border-radius:9px;font-size:13.5px;min-height:44px}
+  .mv a:hover{background:var(--bg)}
+  .mv .av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+    font-size:9.5px;font-weight:800;color:#fff;background:var(--navy)}
+  .mv b{font-weight:700} .mv .p{font-weight:800;min-width:58px;text-align:right}
+
+  .news{display:grid;gap:1px}
+  .news a{display:flex;gap:10px;padding:9px 5px;border-radius:9px;min-height:44px}
+  .news a:hover{background:var(--bg)}
+  .news .ic{width:26px;height:26px;border-radius:7px;background:var(--green-l);display:grid;
+    place-items:center;font-size:12px;flex-shrink:0;margin-top:1px}
+  .news p{font-size:13.5px;line-height:1.5;margin-bottom:2px}
+  .news small{color:var(--mut);font-size:12px}
+
+  .cal{display:grid;gap:2px}
+  .cal li{display:grid;grid-template-columns:60px 1fr;gap:10px;align-items:center;
+    padding:9px 5px;border-radius:8px;font-size:13.5px;min-height:40px}
+  .cal .t{font-weight:800;font-size:12px;color:var(--navy);background:var(--bg);
+    border-radius:6px;padding:4px 5px;text-align:center}
+
+  .xp{background:var(--amber-l);color:var(--amber);font-size:11.5px;font-weight:800;
+    padding:4px 10px;border-radius:99px}
+  .opt{display:grid;gap:6px;margin:10px 0}
+  .opt button{text-align:left;border:1px solid var(--line);background:#fff;border-radius:10px;
+    padding:11px 12px;font:600 13.5px/1.45 inherit;cursor:pointer;color:inherit;
+    display:flex;align-items:center;gap:9px;min-height:44px}
+  .opt button:hover:not(:disabled){border-color:var(--green);background:#f7fdfa}
+  .opt button em{font-style:normal;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);
+    flex-shrink:0;display:grid;place-items:center;font-size:10.5px;font-weight:800;color:var(--mut)}
+  .opt button.ok{background:var(--green-l);border-color:var(--green);color:var(--green-d);font-weight:800}
+  .opt button.ok em{background:var(--green);border-color:var(--green);color:#fff}
+  .opt button.no{background:var(--red-l);border-color:var(--red);color:var(--red)}
+  .opt button.no em{background:var(--red);border-color:var(--red);color:#fff}
+  .qfoot{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--mut)}
+  .why{font-size:13.5px;color:var(--mut);margin:9px 0;padding-top:9px;border-top:1px solid var(--line)}
+
+  .lb{padding:10px 0;border-bottom:1px solid var(--line)}
+  .lb:last-child{border:0;padding-bottom:0}
+  .lb .k{font-size:11.5px;font-weight:800;color:var(--mut);letter-spacing:.3px;margin-bottom:2px}
+  .lb b{font-size:14px}
+  .lb p{font-size:13px;color:var(--mut);margin-top:2px}
+  .warn{background:var(--red-l);border-radius:10px;padding:11px 12px;font-size:13px;margin-top:10px}
+  .warn b{color:var(--red);font-size:12.5px;display:block;margin-bottom:2px}
+
+  .banner{display:block;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);
+    border:1px solid var(--line)}
+  .banner img{width:100%;display:block}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+  .chips button{border:1px solid var(--line);background:var(--bg);border-radius:99px;padding:9px 13px;
+    font:600 12.5px/1 inherit;color:var(--mut);cursor:not-allowed;min-height:36px}
+  .askbox{display:flex;gap:7px}
+  .askbox input{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+    font:inherit;font-size:13.5px;background:var(--bg);min-height:40px}
+  .sq{display:grid;gap:6px}
+  .sq a{display:flex;justify-content:space-between;align-items:center;gap:9px;padding:11px 12px;
+    background:var(--bg);border-radius:10px;font-size:13.5px;font-weight:700;min-height:44px}
+  .sq a:hover{background:var(--green-l);color:var(--green-d)}
+  .sq small{display:block;font-weight:500;color:var(--mut);font-size:12px}
+  .sq b{background:#fff;border:1px solid var(--line);border-radius:99px;padding:2px 10px;
+    font-size:12.5px;flex-shrink:0}
+</style>
+
+<body data-page="home">
+<div class="tick"><div class="tickrow" id="tick"><span class="mut">लोड हो रहा है…</span></div></div>
+
+<main class="wrap" id="main">
+
+  <section class="hero">
+    <div class="heroart">
+      <img src="img/header.jpg" alt="">
+      <div class="txt">
+        <h1><em>30 सेकंड</em> में समझो<br>आज बाजार में <em>क्या हुआ</em><br>और <em>क्यों हुआ</em></h1>
+        <p>सरल भाषा में रोज का पूरा बाजार हाल — ताकि आप आत्मविश्वास के साथ निवेश सीखें।</p>
+        <div class="cta">
+          <a class="btn" href="#saar">आज का बाजार देखें</a>
+          <a class="btn ghost" href="seekhein.html">नए हो? यहाँ से शुरू करो</a>
+        </div>
+      </div>
+    </div>
+    <div class="card" id="mood"><div class="mut">लोड हो रहा है…</div></div>
+  </section>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="grid g3" id="saar">
+    <div class="card"><h2>30 सेकंड का सार</h2><ul class="bul" id="summary"></ul></div>
+    <div class="card"><h2>आज ऐसा क्यों हुआ?</h2><ul class="bul" id="why"></ul></div>
+    <div class="card">
+      <h2>सेक्टर प्रदर्शन <a class="lnk" href="seekhein.html#sector-kya-hote-hain">सेक्टर क्या हैं? →</a></h2>
+      <div class="sec" id="sectors"></div>
+    </div>
+  </div>
+
+  <div class="grid g3">
+    <div class="card">
+      <h2>मार्केट हीटमैप <span class="sub">NIFTY 50</span></h2>
+      <div class="heat" id="heat"></div>
+      <div class="legend">
+        <span><i style="background:#166534"></i>बहुत ऊपर</span>
+        <span><i style="background:#4ade80"></i>ऊपर</span>
+        <span><i style="background:#e2e8f0"></i>लगभग सपाट</span>
+        <span><i style="background:#f87171"></i>नीचे</span>
+        <span><i style="background:#991b1b"></i>बहुत नीचे</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>टॉप मूवर्स</h2>
+      <div class="tabs" id="mvtabs">
+        <button data-k="gainers" class="on">बढ़ने वाले</button>
+        <button data-k="losers">गिरने वाले</button>
+        <button data-k="active">सबसे ज्यादा कारोबार</button>
+        <button data-k="volume">वॉल्यूम</button>
+      </div>
+      <div class="mv" id="movers"></div>
+      <a class="more" href="scanner.html">पूरी लिस्ट देखें →</a>
+    </div>
+    <div class="card">
+      <h2>आज के महत्वपूर्ण समाचार <a class="lnk" href="khabrein.html">सभी खबरें →</a></h2>
+      <div class="news" id="news"></div>
+    </div>
+  </div>
+
+  <div class="grid g4">
+    <div class="card">
+      <h2>रिस्क अलर्ट सेंटर</h2>
+      <div class="sq" id="risk"></div>
+      <a class="more" href="scanner.html">सभी Risk Alerts देखें →</a>
+    </div>
+    <div class="card">
+      <h2>कल किस पर नजर रहेगी?</h2>
+      <ul class="cal" id="cal"></ul>
+    </div>
+    <div class="card">
+      <h2>आज का क्विज <span class="xp">+10 XP</span></h2>
+      <div id="quiz"></div>
+    </div>
+    <div class="card">
+      <h2>आज क्या सीखें?</h2>
+      <div id="learn"></div>
+      <a class="more" href="seekhein.html">सारे लेख देखें →</a>
+    </div>
+  </div>
+
+  <div class="grid g3">
+    <a class="banner" href="practice.html"><img src="img/banner1.jpg"
+      alt="₹1,00,000 वर्चुअल पैसों से बिना जोखिम प्रैक्टिस करें"></a>
+    <div class="card">
+      <h2>AI Market Explainer <span class="xp">जल्द आ रहा है</span></h2>
+      <div style="display:flex;gap:11px;align-items:center">
+        <img src="img/robot.jpg" alt="" style="width:64px;height:64px;border-radius:12px;object-fit:cover;flex-shrink:0">
+        <p style="font-size:13.5px;color:var(--mut)">अपने सवाल पूछो, आसान भाषा में जवाब पाओ।</p>
+      </div>
+      <div class="chips">
+        <button disabled>Market आज क्यों गिरा?</button>
+        <button disabled>Nifty और Sensex में क्या फर्क है?</button>
+        <button disabled>SIP क्या होती है?</button>
+      </div>
+      <div class="askbox">
+        <input placeholder="अपना सवाल पूछें…" disabled aria-label="सवाल पूछें">
+        <button class="btn" disabled style="background:#a9bccf">➤</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Scanner Quick Access <a class="lnk" href="scanner.html">पूरा खोलें →</a></h2>
+      <div class="sq" id="scans"></div>
+    </div>
+  </div>
+</main>
+
+<script src="app.js"></script>
+<script>
+const HI = ['#166534', '#16a34a', '#4ade80', '#d8f0e0'];
+const LO = ['#fee2e2', '#f87171', '#dc2626', '#991b1b'];
+const SEC_COLOR = {IT:'#2563eb', BANK:'#7c3aed', PHARMA:'#0d9488', FMCG:'#ca8a04', AUTO:'#ea580c',
+  REALTY:'#db2777', METAL:'#57534e', ENERGY:'#0891b2', MEDIA:'#9333ea', 'PSU BANK':'#4f46e5'};
+
+homeData().then(render).catch(e => {
+  $('#tick').innerHTML = '<span class="mut">डेटा लोड नहीं हो सका</span>'; console.error(e);
+});
+
+function render(d) {
+  const t = $('#tick'); t.innerHTML = '';
+  d.headline.forEach(r => t.insertAdjacentHTML('beforeend',
+    `<span class="ti"><span class="nm">${r.name}</span><span class="vl num">${inr(r.close)}</span>
+     <span class="num ${sign(r.pct)}">${arrow(r.pct)} ${inr(Math.abs(r.chg))} (${pc(r.pct)})</span></span>`));
+  t.insertAdjacentHTML('beforeend',
+    `<span class="ti mut" style="margin-left:auto">${hindiDate(d.date)}</span>
+     <span class="pill ${d.market_open ? '' : 'shut'}">${d.market_open ? 'बाजार खुला' : 'बाजार बंद'}</span>`);
+
+  const M = {POSITIVE:['सकारात्मक','😀','g'], NEUTRAL:['सामान्य','😐','a'], NEGATIVE:['कमजोर','😟','r']}[d.health.mood];
+  const L = {LOW:['कम','g'], MEDIUM:['मध्यम','a'], HIGH:['ज्यादा','r']};
+  const rows = [];
+  if (d.vix.level) rows.push(['डर का स्तर (Fear)', L[d.vix.level]]);
+  rows.push(['मौका (Opportunity)', d.health.score >= 60 ? ['ज्यादा','g'] : d.health.score >= 40 ? ['मध्यम','a'] : ['कम','r']]);
+  if (d.vix.value != null) rows.push(['उतार-चढ़ाव', d.vix.value < 14 ? ['स्थिर','g'] : ['तेज','a']]);
+  if (d.fii_dii?.fii) rows.push(['FII (विदेशी)', d.fii_dii.fii.net >= 0 ? ['खरीदारी','g'] : ['बिकवाली','r']]);
+  if (d.fii_dii?.dii) rows.push(['DII (घरेलू)', d.fii_dii.dii.net >= 0 ? ['खरीदारी','g'] : ['बिकवाली','r']]);
+  $('#mood').innerHTML = `<h2>बाजार का मूड</h2>
+    <div class="mood"><div class="dot" style="background:var(--${M[2]==='g'?'green-l':M[2]==='r'?'red-l':'amber-l'})">${M[1]}</div>
+      <div><b>${M[0]}</b><div class="mut" style="font-size:12.5px">आज के आंकड़ों के आधार पर</div></div></div>
+    ${rows.map(([k, v]) => `<div class="mrow"><span>${k}</span><span class="tag ${v[1]}"><i></i>${v[0]}</span></div>`).join('')}`;
+
+  const b = d.breadth, ex = d.extremes || {};
+  $('#stats').innerHTML = [
+    ['s5','मार्केट हेल्थ', `${d.health.score}<small>/100</small>`, healthWord(d.health.score)],
+    ['s1','चढ़े / गिरे', `<span class="up">${inr(b.advance)}</span> <span class="mut" style="font-size:14px">/</span> <span class="dn">${inr(b.decline)}</span>`, 'Advance / Decline'],
+    ['s2','52 हफ्ते का उच्च', ex.high != null ? inr(ex.high) : '—', 'शेयर'],
+    ['',  '52 हफ्ते का निम्न', ex.low != null ? inr(ex.low) : '—', 'शेयर'],
+    ['s3','India VIX', d.vix.value ?? '—',
+      d.vix.pct != null ? `<span class="${sign(d.vix.pct)}">${pc(d.vix.pct)}</span> · डर सूचकांक` : 'डर सूचकांक'],
+    ['s4','रुपया', d.usdinr ? '₹' + d.usdinr.rate : '—', 'प्रति डॉलर'],
+  ].map(([ic, k, v, s]) => `<div class="stat"><span class="ic ${ic}"></span>
+    <div><div class="k">${k}</div><div class="v num">${v}</div><div class="s">${s}</div></div></div>`).join('');
+
+  $('#summary').innerHTML = d.summary.map(s => `<li><span class="ic">✅</span><span>${esc(s)}</span></li>`).join('');
+  const WICON = ['🌍','🏦','💵','🛢️','📊','📈'];
+  $('#why').innerHTML = (d.why?.length)
+    ? d.why.map((s, i) => `<li><span class="ic" style="background:var(--amber-l)">${WICON[i % WICON.length]}</span><span>${esc(s)}</span></li>`).join('')
+    : `<li style="display:block;color:var(--mut)">आज का विश्लेषण तैयार हो रहा है।
+       <br><br>तब तक <a href="#saar" style="color:var(--green);font-weight:700">30 सेकंड का सार</a> देखें।</li>`;
+
+  const mx = Math.max(...d.sectors.map(s => Math.abs(s.pct)), 0.5);
+  $('#sectors').innerHTML = d.sectors.map(s =>
+    `<div class="secrow"><span class="sic" style="background:${SEC_COLOR[s.name] || '#4d5f75'}">${s.name[0]}</span>
+      <span>${s.name}</span>
+      <div class="bar"><span style="width:${Math.abs(s.pct)/mx*100}%;background:${s.pct>=0?'var(--green)':'var(--red)'}"></span></div>
+      <b class="num ${sign(s.pct)}">${pc(s.pct)}</b></div>`).join('');
+
+  $('#heat').innerHTML = d.heatmap.slice(0, 20).map(s => {
+    const a = Math.abs(s.pct), i = a > 2 ? 0 : a > 1 ? 1 : a > 0.3 ? 2 : 3;
+    const bg = s.pct >= 0 ? HI[i] : LO[3 - i], pale = i >= 2;
+    return `<div style="background:${bg};color:${pale ? '#0f172a' : '#fff'}" title="${esc(s.sym)} ${pc(s.pct)}"
+      >${esc(s.sym.slice(0, 9))}<s>${pc(s.pct)}</s></div>`;
+  }).join('');
+
+  const drawMv = k => {
+    $('#movers').innerHTML = d.movers[k].map(m =>
+      `<a href="watchlist.html"><span class="av">${esc(m.sym.slice(0, 4))}</span><b>${esc(m.sym)}</b>
+       <span class="num mut">₹${inr(m.close)}</span>
+       <span class="num p ${sign(m.pct)}">${pc(m.pct)}</span></a>`).join('');
+    $$('#mvtabs button').forEach(x => x.classList.toggle('on', x.dataset.k === k));
+  };
+  $$('#mvtabs button').forEach(x => x.onclick = () => drawMv(x.dataset.k));
+  drawMv('gainers');
+
+  const NIC = ['📰','🏦','📈','🌍','💵','🏢'];
+  $('#news').innerHTML = d.news.map((n, i) =>
+    `<a href="${encodeURI(n.link)}" target="_blank" rel="noopener nofollow">
+      <span class="ic">${NIC[i % NIC.length]}</span>
+      <span><p>${esc(n.title)}</p><small>${esc(n.src)}${n.ts ? ' · ' + ago(n.ts) : ''}</small></span></a>`).join('');
+
+  const CIC = {open:'🔔', close:'🔕', data:'📊', event:'📌'};
+  $('#cal').innerHTML = (d.calendar || []).map(e =>
+    `<li><span class="t">${esc(e.at)}</span><span>${CIC[e.kind] || '📌'} ${esc(e.what)}</span></li>`).join('');
+
+  const sc = ex.scans || {};
+  $('#risk').innerHTML = [
+    ['⚠️','तेज गिरावट वाले शेयर', sc.rsi_low, 'RSI 30 से नीचे'],
+    ['🔥','ज्यादा चढ़े शेयर', sc.rsi_high, 'RSI 70 से ऊपर'],
+    ['📊','अचानक वॉल्यूम बढ़ा', sc.vol_burst, 'औसत से 2 गुना'],
+    ['📉','52 हफ्ते के निचले स्तर पास', sc.near_low, '5% के दायरे में'],
+  ].filter(r => r[2] != null).map(([ic, k, v, s]) =>
+    `<a href="scanner.html"><span>${ic} ${k}<small>${s}</small></span><b>${v}</b></a>`).join('');
+
+  if (d.quiz) drawQuiz(d.quiz, d.date);
+
+  const c = d.concept, w = d.word, tip = d.tip;
+  $('#learn').innerHTML =
+    (c ? `<div class="lb"><div class="k">आज का Concept</div><b>${esc(c.title)}</b><p>${esc(c.text)}</p></div>` : '') +
+    (w ? `<div class="lb"><div class="k">आज का Word</div><b>${esc(w.word)}</b><p>${esc(w.text)}</p></div>` : '') +
+    (tip ? `<div class="warn"><b>⚠ आज की गलती जो नहीं करनी</b>${esc(tip)}</div>` : '');
+
+  $('#scans').innerHTML = [
+    ['RSI स्कैनर','RSI 30 से नीचे के शेयर', sc.rsi_low],
+    ['Volume Breakout','औसत से 2 गुना कारोबार', sc.vol_burst],
+    ['52 Week High के पास','2% के दायरे में', sc.near_high],
+    ['52 Week Low के पास','5% के दायरे में', sc.near_low],
+  ].filter(r => r[2] != null).map(([k, s, v]) =>
+    `<a href="scanner.html"><span>${k}<small>${s}</small></span><b>${v}</b></a>`).join('');
+
+  stamp(d);
+}
+
+function drawQuiz(q, day) {
+  const st = load(), done = st.last === day;
+  $('#quiz').innerHTML = `<p style="font-size:14px;font-weight:700">${esc(q.q)}</p>
+    <div class="opt">${q.options.map((o, i) =>
+      `<button data-i="${i}"${done ? ' disabled' : ''}><em>${'ABCD'[i]}</em>${esc(o)}</button>`).join('')}</div>
+    <div class="why"${done ? '' : ' hidden'}>${esc(q.why)}</div>
+    <div class="qfoot"><span>${st.xp} XP</span><span>🔥 Streak: ${st.n} दिन</span></div>`;
+  if (done) mark(q.answer, -1);
+  else $$('#quiz .opt button').forEach(btn => btn.onclick = () => {
+    const picked = +btn.dataset.i;
+    mark(q.answer, picked);
+    $('#quiz .why').hidden = false;
+    save(day, picked === q.answer);
+    const s2 = load();
+    $('#quiz .qfoot').innerHTML = `<span>${s2.xp} XP</span><span>🔥 Streak: ${s2.n} दिन</span>`;
+  });
+
+  function mark(ans, picked) {
+    $$('#quiz .opt button').forEach((b, i) => {
+      b.disabled = true;
+      if (i === ans) b.classList.add('ok'); else if (i === picked) b.classList.add('no');
+    });
+  }
+  function load() {
+    try { return {n: 0, xp: 0, last: '', ...JSON.parse(localStorage.tejii_quiz || '{}')}; }
+    catch { return {n: 0, xp: 0, last: ''}; }
+  }
+  function save(today, correct) {
+    const s = load(), y = new Date(today); y.setDate(y.getDate() - 1);
+    s.n = s.last === y.toISOString().slice(0, 10) ? s.n + 1 : 1;
+    s.last = today;
+    if (correct) s.xp += 10;
+    try { localStorage.tejii_quiz = JSON.stringify(s); } catch {}
+  }
+}
+
+function healthWord(s) { return s >= 70 ? 'अच्छी स्थिति' : s >= 55 ? 'ठीक-ठाक' : s >= 40 ? 'सामान्य' : 'कमजोर'; }
+</script>
+</html>

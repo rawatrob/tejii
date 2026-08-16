@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="hi">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>स्टॉक स्कैनर — अपनी शर्तों पर शेयर छांटिए | Tejii</title>
+<meta name="description" content="NSE के सभी शेयरों को RSI, वॉल्यूम, मूविंग एवरेज और 52 हफ्ते की रेंज पर छांटिए। रोज अपडेट होता है।">
+<link rel="icon" href="img/logo.png">
+<link rel="stylesheet" href="style.css">
+<style>
+  .warnbox{background:var(--amber-l);border:1px solid #f5d98e;border-radius:var(--r);
+    padding:13px 15px;font-size:13.5px;line-height:1.6;margin-bottom:14px;display:flex;gap:10px}
+  .warnbox b{color:var(--amber)}
+  .presets{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+  .presets button{background:#fff;color:var(--fg);border:1px solid var(--line);border-radius:99px;
+    padding:9px 14px;cursor:pointer;font:700 13px/1 inherit;min-height:38px}
+  .presets button:hover{border-color:var(--green);color:var(--green-d)}
+  .filters{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:11px;
+    background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:15px;
+    box-shadow:var(--shadow);margin-bottom:12px}
+  label{display:block;font-size:12px;color:var(--mut);margin-bottom:3px;font-weight:700}
+  input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;
+    background:#fff;color:var(--fg);font:inherit;font-size:14px;min-height:40px}
+  .count{font-size:13.5px;color:var(--mut);margin-bottom:9px}
+  .count b{color:var(--fg)}
+  .wrapt{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:var(--r);
+    box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;min-width:820px;font-variant-numeric:tabular-nums}
+  th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;font-size:13.5px}
+  th:first-child,td:first-child{text-align:left}
+  th{cursor:pointer;user-select:none;font-size:12px;color:var(--mut);font-weight:700;
+    position:sticky;top:0;background:#fff}
+  th:hover{color:var(--fg)}
+  tbody tr:hover{background:var(--bg)}
+  .star{border:0;background:none;cursor:pointer;font-size:15px;padding:2px 6px;min-height:32px}
+</style>
+
+<body data-page="scanner">
+<main class="wrap" id="main">
+  <div class="phead">
+    <h1>स्टॉक स्कैनर</h1>
+    <p>NSE के सारे शेयरों को अपनी शर्तों पर छांटिए। आंकड़े पिछले कारोबारी दिन के बंद भाव के हैं
+       और रोज शाम अपने आप अपडेट होते हैं।</p>
+  </div>
+
+  <div class="warnbox">
+    <span>⚠️</span>
+    <span><b>यह हिस्सा थोड़ा आगे का है।</b> अगर RSI, मूविंग एवरेज जैसे शब्द नए लगें, तो पहले
+      <a href="seekhein.html" style="color:var(--green-d);font-weight:700;text-decoration:underline">सीखें</a>
+      वाला हिस्सा पढ़ लीजिए। यह सूची किसी शेयर को खरीदने की सलाह नहीं है — यह सिर्फ एक छन्नी है।</span>
+  </div>
+
+  <div class="presets">
+    <button data-f='{"rsiMax":30}'>RSI 30 से नीचे</button>
+    <button data-f='{"rsiMin":70}'>RSI 70 से ऊपर</button>
+    <button data-f='{"volX":2}'>वॉल्यूम औसत से 2 गुना</button>
+    <button data-f='{"over":"sma200","rsiMin":50,"rsiMax":65}'>200-दिन औसत से ऊपर, RSI 50–65</button>
+    <button data-f='{"fromHiMin":-2}'>52 हफ्ते के उच्च के 2% भीतर</button>
+    <button data-f='{"fromLoMax":5}'>52 हफ्ते के निम्न के 5% भीतर</button>
+    <button data-f='{}'>सब हटाएं</button>
+  </div>
+
+  <div class="filters">
+    <div><label for="minVal">कम से कम कारोबार (₹ करोड़)</label><input id="minVal" type="number" step="0.5" value="1"></div>
+    <div><label for="rsiMin">RSI कम से कम</label><input id="rsiMin" type="number" placeholder="—"></div>
+    <div><label for="rsiMax">RSI ज्यादा से ज्यादा</label><input id="rsiMax" type="number" placeholder="—"></div>
+    <div><label for="volX">वॉल्यूम, औसत का कितना गुना</label><input id="volX" type="number" step="0.5" placeholder="—"></div>
+    <div><label for="chgMin">आज का बदलाव % कम से कम</label><input id="chgMin" type="number" step="0.5" placeholder="—"></div>
+    <div><label for="fromHiMin">52 हफ्ते के उच्च से दूरी % (कम से कम)</label><input id="fromHiMin" type="number" placeholder="—"></div>
+    <div><label for="fromLoMax">52 हफ्ते के निम्न से दूरी % (ज्यादा से ज्यादा)</label><input id="fromLoMax" type="number" placeholder="—"></div>
+    <div><label for="over">किस औसत से ऊपर</label><select id="over">
+      <option value="">कोई नहीं</option><option value="sma20">20 दिन</option>
+      <option value="sma50">50 दिन</option><option value="sma200">200 दिन</option></select></div>
+  </div>
+
+  <p class="count" id="count">लोड हो रहा है…</p>
+  <div class="wrapt"><table>
+    <thead><tr>
+      <th data-k="sym">शेयर</th><th data-k="close">भाव ₹</th><th data-k="chg">आज %</th>
+      <th data-k="rsi14">RSI</th><th data-k="vol_x">वॉल्यूम ×</th>
+      <th data-k="from_hi">उच्च से %</th><th data-k="from_lo">निम्न से %</th>
+      <th data-k="val_cr">कारोबार ₹ कर.</th><th></th>
+    </tr></thead>
+    <tbody id="rows"></tbody>
+  </table></div>
+  <p class="mut" style="font-size:12.5px;margin:10px 0">
+    सिर्फ पहले 200 नतीजे दिखाए जाते हैं। छन्नी और कसिए तो सूची छोटी हो जाएगी।</p>
+</main>
+
+<script src="app.js"></script>
+<script>
+let ALL = [], sortK = 'val_cr', sortAsc = false;
+const F = ['minVal','rsiMin','rsiMax','volX','chgMin','fromHiMin','fromLoMax','over'];
+
+fetch('data/scan.json?v=' + Date.now()).then(r => r.json()).then(d => {
+  ALL = d.stocks || [];
+  const pre = decodeURIComponent(location.hash.slice(1)).trim().toUpperCase();
+  if (pre) { $('#minVal').value = ''; ALL = ALL.filter(s => s.sym.includes(pre)); }
+  draw();
+}).catch(e => { $('#count').textContent = 'डेटा लोड नहीं हो सका।'; console.error(e); });
+
+F.forEach(id => $('#' + id).oninput = draw);
+$$('.presets button').forEach(b => b.onclick = () => {
+  const f = JSON.parse(b.dataset.f);
+  F.forEach(id => { if (id !== 'minVal') $('#' + id).value = ''; });
+  Object.entries(f).forEach(([k, v]) => $('#' + k).value = v);
+  draw();
+});
+$$('th[data-k]').forEach(th => th.onclick = () => {
+  const k = th.dataset.k;
+  sortAsc = k === sortK ? !sortAsc : false;
+  sortK = k; draw();
+});
+
+function draw() {
+  const g = id => { const v = parseFloat($('#' + id).value); return isNaN(v) ? null : v; };
+  const over = $('#over').value;
+  const f = Object.fromEntries(F.filter(x => x !== 'over').map(id => [id, g(id)]));
+
+  const rows = ALL.filter(s =>
+    (f.minVal    == null || (s.val_cr ?? 0) >= f.minVal) &&
+    (f.rsiMin    == null || (s.rsi14 != null && s.rsi14 >= f.rsiMin)) &&
+    (f.rsiMax    == null || (s.rsi14 != null && s.rsi14 <= f.rsiMax)) &&
+    (f.volX      == null || (s.vol_x != null && s.vol_x >= f.volX)) &&
+    (f.chgMin    == null || (s.chg   != null && s.chg   >= f.chgMin)) &&
+    (f.fromHiMin == null || (s.from_hi != null && s.from_hi >= f.fromHiMin)) &&
+    (f.fromLoMax == null || (s.from_lo != null && s.from_lo <= f.fromLoMax)) &&
+    (!over || s['over_' + over] === true));
+
+  rows.sort((a, b) => {
+    const x = a[sortK], y = b[sortK];
+    if (typeof x === 'string') return sortAsc ? x.localeCompare(y) : y.localeCompare(x);
+    return sortAsc ? (x ?? -1e9) - (y ?? -1e9) : (y ?? -1e9) - (x ?? -1e9);
+  });
+
+  $('#count').innerHTML = `<b>${inr(rows.length)}</b> शेयर आपकी शर्तों पर खरे उतरे`;
+  const num = v => `<td>${v == null ? '—' : inr(v)}</td>`;
+  $('#rows').innerHTML = rows.slice(0, 200).map(s => `<tr>
+    <td><b>${esc(s.sym)}</b></td>
+    ${num(s.close)}
+    <td class="${sign(s.chg)}">${s.chg == null ? '—' : pc(s.chg)}</td>
+    ${num(s.rsi14)}${num(s.vol_x)}
+    <td class="${sign(s.from_hi)}">${s.from_hi == null ? '—' : pc(s.from_hi)}</td>
+    <td class="${sign(s.from_lo)}">${s.from_lo == null ? '—' : pc(s.from_lo)}</td>
+    ${num(s.val_cr)}
+    <td><button class="star" data-s="${esc(s.sym)}" title="Watchlist में जोड़ें/हटाएं"
+      aria-label="${esc(s.sym)} को Watchlist में जोड़ें">${WL.has(s.sym) ? '★' : '☆'}</button></td>
+  </tr>`).join('');
+  $$('.star').forEach(b => b.onclick = () => { b.textContent = WL.toggle(b.dataset.s) ? '★' : '☆'; });
+}
+
+homeData().then(stamp).catch(() => {});
+</script>
+</html>

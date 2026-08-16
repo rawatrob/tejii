@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="hi">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>बाजार समाचार — आज की खबरें | Tejii</title>
+<meta name="description" content="भारतीय शेयर बाजार की आज की बड़ी खबरें, एक जगह। हर खबर के साथ उसका स्रोत।">
+<link rel="icon" href="img/logo.png">
+<link rel="stylesheet" href="style.css">
+<style>
+  .nlayout{display:grid;gap:14px}
+  @media(min-width:1000px){ .nlayout{grid-template-columns:1fr 330px;align-items:start} }
+  .filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+  .filters button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:9px 15px;
+    font:700 13px/1 inherit;cursor:pointer;color:var(--mut);min-height:38px}
+  .filters button.on{background:var(--green);color:#fff;border-color:var(--green)}
+  .nlist{display:grid;gap:10px}
+  .nitem{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px 15px;
+    box-shadow:var(--shadow);display:flex;gap:12px;min-height:56px}
+  .nitem:hover{border-color:var(--green)}
+  .nitem .ic{width:36px;height:36px;border-radius:10px;background:var(--green-l);display:grid;
+    place-items:center;font-size:16px;flex-shrink:0}
+  .nitem h3{font-size:15px;font-weight:700;line-height:1.5}
+  .nitem .meta{font-size:12.5px;color:var(--mut);margin-top:5px;display:flex;gap:8px;flex-wrap:wrap}
+  .src{background:#eef5fb;border-radius:99px;padding:1px 9px;font-weight:700}
+  .note{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:15px;
+    box-shadow:var(--shadow);font-size:13.5px;line-height:1.7}
+  .note h2{font-size:15px;font-weight:800;margin-bottom:9px}
+  .note li{display:flex;gap:8px;margin-bottom:9px}
+  .sum{display:grid;gap:9px;margin-bottom:14px}
+  .sum li{display:flex;gap:9px;font-size:13.5px;line-height:1.55}
+  .sum .ic{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--green-l);
+    display:grid;place-items:center;font-size:11px;margin-top:1px}
+</style>
+
+<body data-page="khabrein">
+<main class="wrap" id="main">
+  <div class="phead">
+    <h1>बाजार समाचार</h1>
+    <p>भारत के भरोसेमंद अखबारों की आज की बड़ी खबरें, एक जगह। हर खबर पर क्लिक करने से आप
+       मूल स्रोत पर पहुंच जाएंगे।</p>
+  </div>
+
+  <div class="nlayout">
+    <div>
+      <div class="filters" id="filters"></div>
+      <div class="nlist" id="list"><p class="mut">लोड हो रहा है…</p></div>
+    </div>
+
+    <aside style="display:grid;gap:14px">
+      <div class="card">
+        <h2>आज का बाजार <a class="lnk" href="index.html">पूरा देखें →</a></h2>
+        <ul class="sum" id="sum"></ul>
+      </div>
+      <div class="note">
+        <h2>खबर पढ़ते वक्त ये याद रखें</h2>
+        <ul>
+          <li><span>📰</span><span>खबर बताती है कि <b>क्या हुआ</b> — यह नहीं कि आपको <b>क्या करना</b> चाहिए।</span></li>
+          <li><span>😨</span><span>डरावने शीर्षक ज्यादा पढ़े जाते हैं, इसलिए बनाए जाते हैं। एक खबर पढ़कर कोई फैसला मत लीजिए।</span></li>
+          <li><span>🎯</span><span>अगर आपका पैसा 5 साल के लिए लगा है, तो आज की ज्यादातर खबरों से आपको फर्क नहीं पड़ता।</span></li>
+          <li><span>🚫</span><span>Tejii कोई खबर नहीं लिखता और किसी शेयर की सलाह नहीं देता। हम सिर्फ स्रोत तक पहुंचाते हैं।</span></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<script src="app.js"></script>
+<script>
+const NIC = ['📰','🏦','📈','🌍','💵','🏢','📊','⚡'];
+let ITEMS = [], SRC = 'all';
+
+fetch('data/news.json?v=' + Date.now()).then(r => r.json()).then(d => {
+  ITEMS = d.items || [];
+  const srcs = [...new Set(ITEMS.map(i => i.src))];
+  $('#filters').innerHTML = [['all', 'सभी'], ...srcs.map(s => [s, s])]
+    .map(([k, l]) => `<button data-k="${esc(k)}"${k === 'all' ? ' class="on"' : ''}>${esc(l)}</button>`).join('');
+  $$('#filters button').forEach(b => b.onclick = () => { SRC = b.dataset.k; draw(); });
+  draw();
+}).catch(e => { $('#list').innerHTML = '<p class="mut">खबरें लोड नहीं हो सकीं।</p>'; console.error(e); });
+
+function draw() {
+  $$('#filters button').forEach(b => b.classList.toggle('on', b.dataset.k === SRC));
+  const rows = SRC === 'all' ? ITEMS : ITEMS.filter(i => i.src === SRC);
+  $('#list').innerHTML = rows.length ? rows.map((n, i) => `
+    <a class="nitem" href="${encodeURI(n.link)}" target="_blank" rel="noopener nofollow">
+      <span class="ic">${NIC[i % NIC.length]}</span>
+      <span><h3>${esc(n.title)}</h3>
+        <span class="meta"><span class="src">${esc(n.src)}</span>
+        ${n.ts ? '<span>' + ago(n.ts) + '</span>' : ''}<span>↗ मूल खबर पढ़ें</span></span></span>
+    </a>`).join('') : '<p class="mut">इस स्रोत से अभी कोई खबर नहीं।</p>';
+}
+
+homeData().then(d => {
+  stamp(d);
+  $('#sum').innerHTML = d.summary.map(s => `<li><span class="ic">✅</span><span>${esc(s)}</span></li>`).join('');
+}).catch(() => {});
+</script>
+</html>

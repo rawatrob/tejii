@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="hi">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>मेरी Watchlist — पसंदीदा शेयर | Tejii</title>
+<meta name="description" content="जिन शेयरों को समझना चाहते हैं उन्हें यहां जोड़िए और रोज उनका हाल देखिए। कोई लॉगिन नहीं।">
+<link rel="icon" href="img/logo.png">
+<link rel="stylesheet" href="style.css">
+<style>
+  .searchbox{position:relative;max-width:520px;margin-bottom:14px}
+  .searchbox input{width:100%;padding:13px 15px;border:1px solid var(--line);border-radius:12px;
+    font:inherit;font-size:15px;background:#fff;min-height:48px}
+  .sug{position:absolute;left:0;right:0;top:100%;margin-top:5px;background:#fff;
+    border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);z-index:20;
+    max-height:320px;overflow:auto}
+  .sug button{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;
+    padding:12px 14px;border:0;border-bottom:1px solid var(--line);background:#fff;cursor:pointer;
+    font:inherit;font-size:14px;text-align:left;min-height:46px}
+  .sug button:hover{background:var(--bg)}
+  .sug button:last-child{border-bottom:0}
+
+  .wl{display:grid;gap:11px}
+  @media(min-width:700px){ .wl{grid-template-columns:repeat(2,1fr)} }
+  @media(min-width:1150px){ .wl{grid-template-columns:repeat(3,1fr)} }
+  .w{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:15px;box-shadow:var(--shadow)}
+  .w .top{display:flex;justify-content:space-between;align-items:flex-start;gap:9px}
+  .w b{font-size:16px;font-weight:800}
+  .w .price{font-size:21px;font-weight:800;margin-top:3px}
+  .w .rm{border:0;background:#f1f5f9;border-radius:9px;width:36px;height:36px;cursor:pointer;
+    font-size:15px;color:var(--mut);flex-shrink:0}
+  .w .rm:hover{background:var(--red-l);color:var(--red)}
+  .w .rows{margin-top:11px;padding-top:10px;border-top:1px solid var(--line);display:grid;gap:5px}
+  .w .r{display:flex;justify-content:space-between;font-size:13px}
+  .w .r span:first-child{color:var(--mut)}
+  .empty{background:#fff;border:1px dashed var(--line);border-radius:var(--r);padding:34px 20px;
+    text-align:center}
+  .empty .em{font-size:42px}
+  .empty h3{font-size:17px;font-weight:800;margin:9px 0 5px}
+  .empty p{color:var(--mut);font-size:14px;max-width:420px;margin:0 auto 14px}
+  .quick{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+  .quick button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:9px 14px;
+    font:700 13px/1 inherit;cursor:pointer;min-height:38px}
+  .quick button:hover{border-color:var(--green);color:var(--green-d)}
+</style>
+
+<body data-page="watchlist">
+<main class="wrap" id="main">
+  <div class="phead">
+    <h1>मेरी Watchlist</h1>
+    <p>जिन कंपनियों को आप समझना चाहते हैं, उन्हें यहां जोड़िए और रोज उनका हाल देखिए —
+       बिना पैसा लगाए। कोई लॉगिन नहीं, सूची इसी फोन/कंप्यूटर में सुरक्षित रहती है।</p>
+  </div>
+
+  <div class="searchbox">
+    <input id="find" placeholder="कंपनी का नाम लिखिए — जैसे RELIANCE, TCS…" autocomplete="off"
+      aria-label="शेयर खोजें">
+    <div class="sug" id="sug" hidden></div>
+  </div>
+
+  <div id="out"><p class="mut">लोड हो रहा है…</p></div>
+</main>
+
+<script src="app.js"></script>
+<script>
+let STOCKS = [], MAP = {};
+const STARTER = ['RELIANCE', 'TCS', 'HDFCBANK', 'INFY', 'ITC', 'SBIN'];
+
+fetch('data/scan.json?v=' + Date.now()).then(r => r.json()).then(d => {
+  STOCKS = d.stocks || [];
+  STOCKS.forEach(s => MAP[s.sym] = s);
+  draw();
+}).catch(e => { $('#out').innerHTML = '<p class="mut">डेटा लोड नहीं हो सका।</p>'; console.error(e); });
+
+$('#find').oninput = e => {
+  const q = e.target.value.trim().toUpperCase();
+  const sug = $('#sug');
+  if (q.length < 2) { sug.hidden = true; return; }
+  const hits = STOCKS.filter(s => s.sym.includes(q)).slice(0, 8);
+  sug.hidden = !hits.length;
+  sug.innerHTML = hits.map(s =>
+    `<button data-s="${esc(s.sym)}"><span><b>${esc(s.sym)}</b></span>
+      <span class="num">₹${inr(s.close)} <b class="${sign(s.chg)}">${pc(s.chg)}</b></span></button>`).join('');
+  $$('#sug button').forEach(b => b.onclick = () => {
+    WL.toggle(b.dataset.s); $('#find').value = ''; sug.hidden = true; draw();
+  });
+};
+addEventListener('click', e => { if (!e.target.closest('.searchbox')) $('#sug').hidden = true; });
+
+function draw() {
+  const list = WL.get().filter(s => MAP[s]);
+  if (!list.length) {
+    $('#out').innerHTML = `<div class="empty"><div class="em">⭐</div>
+      <h3>आपकी Watchlist अभी खाली है</h3>
+      <p>ऊपर खोजकर कोई कंपनी जोड़िए। शुरुआत के लिए ये जानी-पहचानी कंपनियां देख सकते हैं —
+         यह सलाह नहीं, सिर्फ अभ्यास के लिए उदाहरण हैं।</p>
+      <div class="quick">${STARTER.filter(s => MAP[s]).map(s =>
+        `<button data-s="${s}">+ ${s}</button>`).join('')}</div></div>`;
+    $$('.quick button').forEach(b => b.onclick = () => { WL.toggle(b.dataset.s); draw(); });
+    return;
+  }
+  $('#out').innerHTML = `<div class="wl">${list.map(sym => {
+    const s = MAP[sym];
+    const row = (k, v) => `<div class="r"><span>${k}</span><span class="num">${v}</span></div>`;
+    return `<div class="w">
+      <div class="top">
+        <div><b>${esc(s.sym)}</b>
+          <div class="price num">₹${inr(s.close)}
+            <span style="font-size:14px" class="${sign(s.chg)}">${arrow(s.chg)} ${pc(s.chg)}</span></div></div>
+        <button class="rm" data-s="${esc(s.sym)}" aria-label="${esc(s.sym)} हटाएं">✕</button>
+      </div>
+      <div class="rows">
+        ${row('52 हफ्ते का उच्च', '₹' + inr(s.hi52))}
+        ${row('52 हफ्ते का निम्न', '₹' + inr(s.lo52))}
+        ${row('उच्च से दूरी', `<b class="${sign(s.from_hi)}">${pc(s.from_hi)}</b>`)}
+        ${row('RSI (14 दिन)', s.rsi14 ?? '—')}
+        ${row('आज का कारोबार', '₹' + inr(s.val_cr) + ' करोड़')}
+      </div></div>`;
+  }).join('')}</div>
+  <p class="mut" style="font-size:13px;margin-top:12px">
+    यह सूची सिर्फ इसी ब्राउज़र में रखी है। ये आंकड़े पिछले कारोबारी दिन के बंद भाव के हैं।</p>`;
+  $$('.rm').forEach(b => b.onclick = () => { WL.toggle(b.dataset.s); draw(); });
+}
+
+homeData().then(stamp).catch(() => {});
+</script>
+</html>

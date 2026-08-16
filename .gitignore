@@ -1,0 +1,28 @@
+# Source images. The site loads only img/ — those are the optimised copies
+# (5.8 MB -> 600 KB). These originals stay on your machine so you can re-crop
+# or re-export later; they just don't belong in the repo or on the server.
+# Regenerate an img/ file from its original with sips, e.g.:
+#   sips -Z 1400 header.png -s format jpeg -s formatOptions 72 --out img/header.jpg
+/*.png
+/*.jpg
+/*.jpeg
+/*.webp
+
+# Cloudflare Pages build output — rebuilt on every deploy
+dist/
+
+# Machine noise
+__pycache__/
+*.pyc
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# ---------------------------------------------------------------------------
+# Do NOT ignore raw/ — it looks big but it is load-bearing.
+# Those bhavcopy zips are the archive the whole pipeline rests on. scan.py skips
+# any date already on disk, so keeping them committed means the daily job fetches
+# ONE 195 KB file instead of re-downloading a year from NSE on every run.
+# They are excluded from the live site by the Cloudflare build command, not here.
+# ---------------------------------------------------------------------------

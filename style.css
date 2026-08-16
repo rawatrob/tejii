@@ -1,0 +1,98 @@
+/* Tejii — shared styles for every page.
+   Minimum body text is 12.5px and minimum tap target 36px on purpose: the
+   audience is beginners on phones, often older. Do not shrink these. */
+:root{
+  --green:#16a34a; --green-d:#15803d; --green-l:#dcfce7; --green-b:#22c55e;
+  --navy:#0f2744; --red:#dc2626; --red-l:#fee2e2; --amber:#d97706; --amber-l:#fef3c7;
+  --bg:#e6f2fc; --head:#f2f9fe; --card:#fff; --fg:#0f172a; --mut:#4d5f75; --line:#d5e6f4;
+  --r:16px; --shadow:0 1px 2px rgba(15,39,68,.05),0 4px 12px rgba(15,39,68,.05);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);padding-bottom:66px;
+  font:15px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Devanagari",sans-serif;
+  -webkit-text-size-adjust:100%}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+.wrap{max-width:1600px;margin:0 auto;padding:0 14px}
+.up{color:var(--green)} .dn{color:var(--red)} .mut{color:var(--mut)}
+.num{font-variant-numeric:tabular-nums}
+.more{font-size:13px;font-weight:700;color:var(--green);display:block;text-align:center;
+  margin-top:11px;padding:9px 0 3px;border-top:1px solid var(--line)}
+.skip{position:absolute;left:-9999px}
+.skip:focus{left:14px;top:8px;z-index:99;background:#fff;padding:9px 14px;border-radius:9px}
+
+/* ---------- header ---------- */
+header{background:var(--head);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+.hrow{display:flex;align-items:center;gap:10px;padding:9px 0}
+.logo{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.logo img{height:36px;width:auto;border-radius:7px}
+.logo b{font-size:21px;font-weight:800;color:var(--navy);letter-spacing:-.3px}
+nav{display:none;gap:6px;margin-left:14px}
+nav a{display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 12px 6px;
+  border-radius:13px;font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap;
+  background:#fff;box-shadow:0 1px 2px rgba(15,39,68,.06);min-height:52px;justify-content:center}
+nav a:hover{box-shadow:0 2px 6px rgba(15,39,68,.12)}
+nav a.on{background:var(--green-l);color:var(--green-d);box-shadow:none}
+
+/* nav icon sprite — 6 icons across img/nav.png */
+.ni{width:24px;height:24px;background-image:url(img/nav.png);
+  background-size:238.3px 95px;background-repeat:no-repeat;background-position:-15px -35px}
+.ni.i1{background-position:-52.2px -35px}
+.ni.i2{background-position:-88.8px -35px}
+.ni.i3{background-position:-125.8px -35px}
+.ni.i4{background-position:-162.6px -35px}
+.ni.i5{background-position:-199.4px -35px}
+
+.hsearch{flex:1;min-width:0}
+.hsearch input{width:100%;padding:10px 14px 10px 34px;border:1px solid var(--line);border-radius:99px;
+  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234d5f75' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E") no-repeat 11px center/15px;
+  font-size:14px;font-family:inherit;min-height:40px}
+.btn{background:var(--green);color:#fff;border:0;border-radius:11px;padding:11px 17px;
+  font:700 14px/1 inherit;cursor:pointer;white-space:nowrap;display:inline-block;min-height:40px}
+.btn:hover{background:var(--green-d)}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line);font-weight:700}
+@media(min-width:1060px){ nav{display:flex} .hsearch{max-width:250px;flex:0 1 250px;margin-left:auto} }
+
+.mnav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);
+  display:flex;z-index:60;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -2px 10px rgba(0,0,0,.05)}
+.mnav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  padding:8px 2px 9px;font-size:11.5px;font-weight:700;color:var(--mut);min-height:56px}
+.mnav a.on{color:var(--green)}
+@media(min-width:1060px){ .mnav{display:none} body{padding-bottom:0} }
+
+/* ---------- cards ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:16px;box-shadow:var(--shadow)}
+.card h2{font-size:16px;font-weight:800;margin-bottom:13px;display:flex;align-items:center;
+  justify-content:space-between;gap:8px;letter-spacing:-.2px}
+/* padded so the tap area clears 36px even though the text is small */
+.card h2 .lnk{font-size:12.5px;font-weight:700;color:var(--green);
+  padding:8px 0 8px 8px;margin:-8px 0;display:inline-block}
+.card h2 .sub{font-size:12px;font-weight:700;color:var(--mut)}
+.grid{display:grid;gap:14px;margin-bottom:14px}
+@media(min-width:720px){ .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(2,1fr)}
+  .g4{grid-template-columns:repeat(2,1fr)} }
+@media(min-width:1060px){ .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} }
+
+/* page heading used by inner pages */
+.phead{padding:18px 0 4px}
+.phead h1{font-size:clamp(23px,3.4vw,33px);font-weight:800;color:var(--navy);letter-spacing:-.5px}
+.phead p{color:var(--mut);margin-top:5px;font-size:14.5px;max-width:640px}
+
+.tag{font-size:12px;font-weight:800;padding:3px 10px;border-radius:99px;background:#eef5fb;
+  display:inline-flex;align-items:center;gap:4px}
+.tag.g{background:var(--green-l);color:var(--green-d)} .tag.r{background:var(--red-l);color:var(--red)}
+.tag.a{background:var(--amber-l);color:var(--amber)}
+
+/* ---------- footer ---------- */
+footer{background:var(--navy);color:#c2d3e6;margin-top:10px;padding:28px 0 20px;font-size:13.5px}
+.fgrid{display:grid;gap:20px;grid-template-columns:1fr 1fr}
+footer h4{color:#fff;font-size:13.5px;margin-bottom:9px}
+footer li{margin-bottom:2px}
+footer li a{display:inline-block;padding:8px 0;min-height:36px}
+footer a:hover{color:#fff}
+.remember li{display:flex;gap:6px}
+.disc{margin-top:22px;padding-top:15px;border-top:1px solid rgba(255,255,255,.14);
+  font-size:12.5px;line-height:1.7;color:#93a9c1}
+@media(min-width:520px){ .fgrid{grid-template-columns:repeat(3,1fr)} }
+@media(min-width:900px){ .fgrid{grid-template-columns:1.6fr 1fr 1fr 1fr 1.3fr} }
